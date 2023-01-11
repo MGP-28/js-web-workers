@@ -1,3 +1,5 @@
+import { validator } from "./validator.js";
+
 const timer = document.getElementById("timer");
 const form = document.getElementById("form");
 const amountInput = document.getElementById("amount-input");
@@ -22,6 +24,10 @@ form.addEventListener("submit", (e) => {
   e.preventDefault();
 
   const amount = amountInput.value;
+  if (!validator(amount)) {
+    window.alert("Invalid number");
+    return;
+  }
 
   const usersWorker = new Worker("users.js");
   usersWorker.postMessage(amount);
@@ -45,8 +51,6 @@ function createResponseListenerUsers(worker) {
     const users = e.data;
 
     users.forEach((user) => {
-      console.log("user", user);
-
       const userWorker = new Worker("user.js");
       userWorker.postMessage(user);
       createResponseListenerUser(userWorker);
@@ -60,7 +64,7 @@ function createResponseListenerUser(worker) {
   worker.onmessage = (e) => {
     const user = e.data;
     const userEl = document.createElement("div");
-    userEl.classList.add("user-card")
+    userEl.classList.add("user-card");
     userEl.innerHTML = `
         <p>Username: <span>${user.username}</span></p>
         <p>Name: <span>${user.name}</span></p>
