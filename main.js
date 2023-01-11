@@ -6,6 +6,10 @@ const amountInput = document.getElementById("amount-input");
 const cards = document.getElementById("cards");
 
 //
+// DOCUMENTATION
+// https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers
+
+//
 // Creating a new worker is simple. All you need to do is call the Worker() constructor, specifying the URI of a script to execute in the worker thread (main.js):
 
 let worker = undefined;
