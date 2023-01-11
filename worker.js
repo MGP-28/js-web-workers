@@ -8,14 +8,7 @@
 // postMessage -> sent out processed data
 
 onmessage = (e) => {
-  console.log("Message received from main script");
+  const newTime = parseInt(e.data) + 1;
 
-  const timer = e.data.seconds * 1000;
-
-  setTimeout(() => {
-    const workerResult = `You waited ${e.data.seconds} seconds`;
-
-    console.log("Posting message back to main script");
-    postMessage(workerResult);
-  }, timer);
+  postMessage(newTime);
 };

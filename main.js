@@ -1,11 +1,18 @@
-const output = document.getElementById("output");
+const timer = document.getElementById("timer");
 const form = document.getElementById("form");
 const amountInput = document.getElementById("amount-input");
+const cards = document.getElementById("cards");
 
 //
 // Creating a new worker is simple. All you need to do is call the Worker() constructor, specifying the URI of a script to execute in the worker thread (main.js):
 
-const myWorker = new Worker("worker.js");
+let worker = undefined;
+setInterval(() => {
+  const data = timer.textContent;
+  worker = new Worker("worker.js");
+  worker.postMessage(data);
+  createResponseListenerTimer(worker);
+}, 1000);
 
 //
 // The magic of workers happens via the postMessage() method and the onmessage event handler.
@@ -14,8 +21,11 @@ const myWorker = new Worker("worker.js");
 form.addEventListener("submit", (e) => {
   e.preventDefault();
 
-  const data = { seconds: amountInput.value };
-  myWorker.postMessage(data);
+  const amount = amountInput.value;
+
+  const usersWorker = new Worker("users.js");
+  usersWorker.postMessage(amount);
+  createResponseListenerUsers(usersWorker);
 });
 
 //
@@ -23,15 +33,51 @@ form.addEventListener("submit", (e) => {
 // Here we multiply together the two numbers then use postMessage() again, to post the result back to the main thread.
 // Back in the main thread, we use onmessage again, to respond to the message sent back from the worker:
 
-myWorker.onmessage = (e) => {
-  output.textContent = e.data;
-  console.log("Message received from worker");
-  terminate();
-};
+function createResponseListenerTimer(worker) {
+  worker.onmessage = (e) => {
+    timer.textContent = e.data;
+    terminate(worker);
+  };
+}
+
+function createResponseListenerUsers(worker) {
+  worker.onmessage = (e) => {
+    const users = e.data;
+
+    users.forEach((user) => {
+      console.log("user", user);
+
+      const userWorker = new Worker("user.js");
+      userWorker.postMessage(user);
+      createResponseListenerUser(userWorker);
+    });
+
+    terminate(worker);
+  };
+}
+
+function createResponseListenerUser(worker) {
+  worker.onmessage = (e) => {
+    const user = e.data;
+    const userEl = document.createElement("div");
+    userEl.classList.add("user-card")
+    userEl.innerHTML = `
+        <p>Username: <span>${user.username}</span></p>
+        <p>Name: <span>${user.name}</span></p>
+        <p>Age: <span>${user.age}</span></p>
+        <p>Country: <span>${user.country}</span></p>
+    `;
+    cards.appendChild(userEl);
+    terminate(worker);
+  };
+}
 
 //
 // If you need to immediately terminate a running worker from the main thread, you can do so by calling the worker's terminate method
 
-function terminate() {
-  myWorker.terminate();
+function terminate(worker) {
+  worker.terminate();
 }
+
+//
+////

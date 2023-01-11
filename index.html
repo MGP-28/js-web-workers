@@ -5,16 +5,19 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
+    <link rel="stylesheet" href="style.css">
   </head>
   <body>
+    <p>Timer: <span id="timer">0</span> seconds</p>
     <form action="" id="form">
-      <label for="amount">Insert the amount of time, in seconds, to wait</label>
+      <label for="amount">Insert how many users you need</label>
       <input type="text" name="amount" id="amount-input" />
       <button type="submit">Submit</button>
     </form>
-    <p>
-        Output: <span id="output"></span>
-    </p>
+    <div id="card-container">
+        <h3>Users:</h3>
+        <div id="cards"></div>
+    </div>
     <script src="main.js"></script>
   </body>
 </html>
