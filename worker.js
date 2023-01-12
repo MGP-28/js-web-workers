@@ -12,3 +12,13 @@ onmessage = (e) => {
 
   postMessage(newTime);
 };
+
+
+// Reliable error handling
+
+self.addEventListener('unhandledrejection', function (event) {
+  // the event object has two special properties:
+  // event.promise - the promise that generated the error
+  // event.reason  - the unhandled error object
+  throw event.reason;
+});

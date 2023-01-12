@@ -48,6 +48,12 @@ function createResponseListenerTimer(worker) {
     timer.textContent = e.data;
     terminate(worker);
   };
+
+  // Error handling
+  // Error needs to be thrown inside the worker
+  worker.onerror = (event) => {
+    console.log('There is an error with your worker!');
+  }
 }
 
 function createResponseListenerUsers(worker) {
